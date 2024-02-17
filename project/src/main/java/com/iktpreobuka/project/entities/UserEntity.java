@@ -1,16 +1,39 @@
 package com.iktpreobuka.project.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UserEntity {
 	
+		@Id
+		@GeneratedValue(strategy = GenerationType.AUTO)
 	    private Integer id;
+		@Column(name = "first_name", nullable = false)
 	    private String firstName;
+		@Column(name = "last_name", nullable = false)
 	    private String lastName;
+		@Column(name = "user_name", nullable = true)
 	    private String username;
+		@Column(name = "password", nullable = false)
 	    private String password;
+	    @Column(name = "email", nullable = false, unique = true)
 	    private String email;
+	    @Enumerated(EnumType.STRING)
+	    @Column(name = "user_role", nullable = false)
 	    private EUserRole userRole;
 	    
-	
+	    
 		public UserEntity() {
 			super();
 		}

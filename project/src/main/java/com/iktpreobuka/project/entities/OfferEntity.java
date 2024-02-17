@@ -2,17 +2,46 @@ package com.iktpreobuka.project.entities;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "offers")
 public class OfferEntity {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
+	@Column(name = "offer_name", nullable = false)
 	private String offerName;
+	@Column(name = "offer_description", nullable = false)
 	private String offerDescription;
+	@Column(name = "offer_created", nullable = false)
 	private Date offerCreated;
+	@Column(name = "offer_expires", nullable = false)
 	private Date offerExpires;
+	@Column(name = "regular_price", nullable = false)
 	private Double regularPrice;
+	@Column(name = "action_price", nullable = false)
 	private Double actionPrice;
+	@Column(name = "image_path", nullable = true)
 	private String imagePath;
+	@Column(name = "available_offers", nullable = false)
 	private Integer availableOffers;
+	@Column(name = "bought_offers", nullable = false)
 	private Integer boughtOffers;
+	
+	@Enumerated(EnumType.STRING)
+    @Column(name = "offer_status", nullable = false)
 	private EOfferStatus offerStatus;
 	public OfferEntity() {
 		super();

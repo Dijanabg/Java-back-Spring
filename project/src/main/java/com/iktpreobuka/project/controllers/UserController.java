@@ -1,9 +1,14 @@
 package com.iktpreobuka.project.controllers;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,51 +16,53 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iktpreobuka.project.entities.EUserRole;
 import com.iktpreobuka.project.entities.UserEntity;
+import com.iktpreobuka.project.repositories.UserRepository;
 
 @RestController
 @RequestMapping(value = "/project/users")
 public class UserController {
 	
-	List<UserEntity> users = new ArrayList<>();
-	private List<UserEntity> getDB() {
-		if(users.isEmpty()) {
-			users.add(new UserEntity(1, "Vladimir", "Dimitrieski", "dimitrieski@uns.ac.rs", "vladimir", "vladimir", EUserRole.ROLE_CUSTOMER));
-			users.add(new UserEntity(2, "Milan", "Celikovic", "milancel@uns.ac.rs", "milan", "milan", EUserRole.ROLE_CUSTOMER));
-			users.add(new UserEntity(3, "Nebojsa", "Horvat", "horva.n@uns.ac.rs", "nebojsa", "nebojsa", EUserRole.ROLE_CUSTOMER));
-		}
-	return users;
-	}
-	public UserController() {
-	        users = getDB(); 
+	@Autowired
+	private UserRepository userRepository;
+	
+	@GetMapping
+	public Iterable<UserEntity> getAllUsers() {
+		return userRepository.findAll();
 	}
 	
-	//vrati sve usere
-	@GetMapping
-    public List<UserEntity> getAllUsers() {
-        return users;
-    }
+	@PostMapping
+	public UserEntity addNewUser(@RequestParam String name,@RequestParam String lastName,
+	@RequestParam String email, @RequestParam String username, @RequestParam String password, @RequestParam EUserRole userRole) {
+		UserEntity user = new UserEntity();
+		user.setFirstName(name);
+		user.setLastName(lastName);
+		user.setEmail(email);
+		user.setUsername(username);
+		user.setPassword(password);
+		user.setUserRole(userRole);
+		userRepository.save(user);
+		return user;
+	}
 	
 	//vrati usera po id
 	@GetMapping("/{id}")
-	public UserEntity getUserById(@PathVariable Integer id) {
-	    for (UserEntity user : users) {
-	        if (user.getId().equals(id)) {
-	            return user;
-	        }
-	    }
-	    return null; // vraca null ako korisnik  ne postoji
+	public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id) {
+		Optional<UserEntity> user = userRepository.findById(id);
+		return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 	
 	//dodaj usera sa odredjenom rolom
 	@PostMapping
 	public UserEntity addUser(@RequestBody UserEntity newUser) {
+		UserEntity user = new UserEntity();
 	    newUser.setUserRole(EUserRole.ROLE_CUSTOMER); // postavlja role na ROLE_CUSTOMER
-	    users.add(newUser); // dodaje novog korisnika u listu
+	    user.save(newUser); // dodaje novog korisnika u listu
 	    return newUser; // vraca dodatog korisnika
 	}
 	
@@ -121,16 +128,13 @@ public class UserController {
 	
 	//delete user
 	@DeleteMapping("/{id}")
-	public UserEntity deleteUser(@PathVariable Integer id) {
-	    for (Iterator<UserEntity> iterator = users.iterator(); iterator.hasNext();) {
-	        UserEntity user = iterator.next();
-	        if (user.getId().equals(id)) {
-	            iterator.remove(); // brise usera iz liste
-	            return user; // vraca obrisanog usera
-	        }
-	    }
-	    return null; // null ako id ne postoji
-	}
+    public ResponseEntity<Object> deleteUser(@PathVariable Integer id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
 	
 	 @GetMapping("/by-username/{username}")
 	  public UserEntity getUserByUsername(@PathVariable String username) {

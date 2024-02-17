@@ -12,4 +12,5 @@ public interface AddressRepository extends CrudRepository<AddressEntity, Integer
 	
 	@Query("SELECT a FROM AddressEntity a WHERE a.country = ?1 ORDER BY a.country ASC")
 	List<AddressEntity> findByCountrySorted(String country);
+
 }
