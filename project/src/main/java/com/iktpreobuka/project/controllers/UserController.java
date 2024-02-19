@@ -1,9 +1,5 @@
 package com.iktpreobuka.project.controllers;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iktpreobuka.project.entities.EUserRole;
 import com.iktpreobuka.project.entities.UserEntity;
 import com.iktpreobuka.project.repositories.UserRepository;
+import com.iktpreobuka.project.services.UserServiceImpl;
 
 @RestController
 @RequestMapping(value = "/project/users")
@@ -30,102 +26,41 @@ public class UserController {
 	
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private UserServiceImpl userServiceImpl;
 	
+	
+	//dodaj novog usera
+	@PostMapping
+	public UserEntity addNewUser(@RequestBody UserEntity newUser) {
+        return userServiceImpl.addNewUser(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(),
+                newUser.getUsername(), newUser.getPassword(), newUser.getUserRole());
+    }
+	
+	//vrati usera po id
+	@GetMapping("/{id}")
+	public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id) {
+		Optional<UserEntity> user = userServiceImpl.getUserById(id);
+        return user.map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
+	}
+	
+	//vrati sve usere
 	@GetMapping
 	public Iterable<UserEntity> getAllUsers() {
 		return userRepository.findAll();
 	}
 	
-	@PostMapping
-	public UserEntity addNewUser(@RequestParam String name,@RequestParam String lastName,
-	@RequestParam String email, @RequestParam String username, @RequestParam String password, @RequestParam EUserRole userRole) {
-		UserEntity user = new UserEntity();
-		user.setFirstName(name);
-		user.setLastName(lastName);
-		user.setEmail(email);
-		user.setUsername(username);
-		user.setPassword(password);
-		user.setUserRole(userRole);
-		userRepository.save(user);
-		return user;
-	}
-	
-	//vrati usera po id
-	@GetMapping("/{id}")
-	public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id) {
-		Optional<UserEntity> user = userRepository.findById(id);
-		return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-	}
-	
-	//dodaj usera sa odredjenom rolom
-	@PostMapping
-	public UserEntity addUser(@RequestBody UserEntity newUser) {
-		UserEntity user = new UserEntity();
-	    newUser.setUserRole(EUserRole.ROLE_CUSTOMER); // postavlja role na ROLE_CUSTOMER
-	    user.save(newUser); // dodaje novog korisnika u listu
-	    return newUser; // vraca dodatog korisnika
-	}
-	
 	//update usera
 	@PutMapping("/{id}")
-	public UserEntity updateUser(@PathVariable Integer id, @RequestBody UserEntity userUpdates) {
-	    for (UserEntity user : users) {
-	        if (user.getId().equals(id)) {
-	            if (userUpdates.getFirstName() != null) {
-	                user.setFirstName(userUpdates.getFirstName());
-	            }
-	            if (userUpdates.getLastName() != null) {
-	                user.setLastName(userUpdates.getLastName());
-	            }
-	            if (userUpdates.getUsername() != null) {
-	                user.setUsername(userUpdates.getUsername());
-	            }
-	            if (userUpdates.getEmail() != null) {
-	                user.setEmail(userUpdates.getEmail());
-	            }
-	            // userRole i password se ne menjaju
-	            return user; //azuriran  user
-	        }
+	public ResponseEntity<UserEntity> updateUser(@PathVariable Integer id, @RequestBody UserEntity userUpdates) {
+	    UserEntity updatedUser = userServiceImpl.updateUser(id, userUpdates);
+	    if (updatedUser != null) {
+	        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+	    } else {
+	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    }
-	    return null; // null ako ne postoji id
 	}
-	
-	//menjanje role po Id
-	@PutMapping("/change/{id}/role/{role}")
-	public UserEntity changeUserRole(@PathVariable Integer id, @PathVariable String role) {
-	    EUserRole newRole;
-	    try {
-	        newRole = EUserRole.valueOf(role.toUpperCase());
-	    } catch (IllegalArgumentException e) {
-	        return null; // vraca null ako prosledjena uloga nije validna
-	    }
-
-	    for (UserEntity user : users) {
-	        if (user.getId().equals(id)) {
-	            user.setUserRole(newRole); // menjanje role
-	            return user; // izmenjen korisnik
-	        }
-	    }
-	    return null; // null ako id ne postoji
-	}
-	 //menjanje passworda
-	@PutMapping("/changePassword/{id}")
-	public UserEntity changeUserPassword(@PathVariable Integer id, 
-										@RequestParam("oldPassword") String oldPassword, 
-										@RequestParam("newPassword") String newPassword) {
-			for(UserEntity user : users) {
-				if(user.getId().equals(id)) {
-					if (user.getPassword().equals(oldPassword)) {
-						user.setPassword(newPassword);//postavlja novi password
-						return user;
-					}else {
-						return null; //ako se ne poklapa oldPassword
-					}
-				}
-			}
-			return null;
-	}
-	
 	//delete user
 	@DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable Integer id) {
@@ -135,15 +70,49 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
-	
-	 @GetMapping("/by-username/{username}")
-	  public UserEntity getUserByUsername(@PathVariable String username) {
-	      for(UserEntity user : users) {
-	          if(user.getUsername().equals(username)) {
-	              return user;
-	          }
-	      }
-	      return null; // null ako username ne postoji
-	  }
+	//menjanje role po Id
+	@PutMapping("/change/{id}/role/{role}")
+    public ResponseEntity<UserEntity> changeUserRole(@PathVariable Integer id, @PathVariable String role) {
+        EUserRole newRole;
+        try {
+            newRole = EUserRole.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // uloga nije validna, vraća BAD_REQUEST
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        UserEntity updatedUser = userServiceImpl.changeUserRole(id, newRole);
+        if (updatedUser != null) {
+            //korisnik uspešno ažuriran, vraća ažuriranog korisnika
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } else {
+            // korisnik sa datim ID-jem ne postoji, vraća NOT_FOUND
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+	}
+
+	//menjanje passworda
+	@PutMapping("/changePassword/{id}")
+	public ResponseEntity<?> changeUserPassword(@PathVariable Integer id, 
+	                                            @RequestParam("oldPassword") String oldPassword, 
+	                                            @RequestParam("newPassword") String newPassword) {
+	    UserEntity updatedUser = userServiceImpl.changeUserPassword(id, oldPassword, newPassword);
+	    if (updatedUser != null) {
+	        return ResponseEntity.ok().build();
+	    } else {
+	        return ResponseEntity.badRequest().body("Invalid old password or user not found.");
+	    }
+	}
+
+	//vrati usera po username
+	@GetMapping("/by-username/{username}")
+	public ResponseEntity<UserEntity> getUserByUsername(@PathVariable String username) {
+	    UserEntity user = userServiceImpl.getUserByUsername(username);
+	    if (user != null) {
+	        return ResponseEntity.ok(user);
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
+	}
 	 
 }
