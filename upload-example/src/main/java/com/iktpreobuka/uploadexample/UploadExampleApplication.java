@@ -15,16 +15,15 @@ public class UploadExampleApplication {
 	}
 	@Bean
 	public TomcatServletWebServerFactory tomcatEmbedded() {
-	TomcatServletWebServerFactory tomcat = new
-	TomcatServletWebServerFactory();
-	tomcat.addConnectorCustomizers((TomcatConnectorCustomizer)
-	connector -> {if ((connector.getProtocolHandler()
-	instanceof AbstractHttp11Protocol<?>)) {
-	//-1 means unlimited
-	((AbstractHttp11Protocol<?>)
-	connector.getProtocolHandler()).setMaxSwallowSize(-1);
-	}
-	});
-	return tomcat;
+		TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
+		tomcat.addConnectorCustomizers((TomcatConnectorCustomizer)
+		connector -> {
+			if ((connector.getProtocolHandler() instanceof AbstractHttp11Protocol<?>)) {
+					//-1 means unlimited
+				((AbstractHttp11Protocol<?>)
+				connector.getProtocolHandler()).setMaxSwallowSize(-1);
+			}
+		});
+		return tomcat;
 	}
 }
