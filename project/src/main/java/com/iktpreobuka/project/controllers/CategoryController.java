@@ -13,37 +13,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iktpreobuka.project.entities.CategoryEntity;
-import com.iktpreobuka.project.services.CategoryServiceImpl;
+import com.iktpreobuka.project.services.CategoryService;
+
 
 
 @RestController
 @RequestMapping(path = "/project/categories")
 public class CategoryController {
 	@Autowired
-    private CategoryServiceImpl categoryServiceImpl;
+    private CategoryService categoryService;
 
     @GetMapping
     public List<CategoryEntity> getAllCategories() {
-        return categoryServiceImpl.getAllCategories();
+        return categoryService.getAllCategories();
     }
 
     @PostMapping
     public CategoryEntity addCategory(@RequestBody CategoryEntity newCategory) {
-        return categoryServiceImpl.addCategory(newCategory);
+        return categoryService.addCategory(newCategory);
     }
 
     @DeleteMapping("/{id}")
     public void deleteCategory(@PathVariable Integer id) {
-        categoryServiceImpl.deleteCategory(id);
+        categoryService.deleteCategory(id);
     }
 
     @GetMapping("/{id}")
     public CategoryEntity getCategoryById(@PathVariable Integer id) {
-        return categoryServiceImpl.getCategoryById(id);
+        return categoryService.getCategoryById(id);
     }
     
     @PutMapping("/{id}")
     public CategoryEntity updateCategory(@PathVariable Integer id, @RequestBody CategoryEntity categoryDetails) {
-        return categoryServiceImpl.updateCategory(id, categoryDetails);
+        return categoryService.updateCategory(id, categoryDetails);
     }
 }

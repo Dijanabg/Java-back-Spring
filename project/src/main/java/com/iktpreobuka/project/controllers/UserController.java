@@ -18,7 +18,8 @@ import com.iktpreobuka.project.entities.EUserRole;
 import com.iktpreobuka.project.entities.UserEntity;
 import com.iktpreobuka.project.exceptions.ResourceNotFoundException;
 import com.iktpreobuka.project.repositories.UserRepository;
-import com.iktpreobuka.project.services.UserServiceImpl;
+import com.iktpreobuka.project.services.UserService;
+
 
 @RestController
 @RequestMapping(value = "/project/users")
@@ -27,13 +28,13 @@ public class UserController {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
-	private UserServiceImpl userServiceImpl;
+	private UserService userService;
 	
 	
 	//dodaj novog usera
 	@PostMapping
 	public UserEntity addNewUser(@RequestBody UserEntity newUser) {
-        return userServiceImpl.addNewUser(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(),
+        return userService.addNewUser(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(),
                 newUser.getUsername(), newUser.getPassword(), newUser.getUserRole());
     }
 	
@@ -48,7 +49,7 @@ public class UserController {
 	@GetMapping("/{id}")
 	public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id) {
 	    try {
-	        UserEntity user = userServiceImpl.getUserById(id);
+	        UserEntity user = userService.getUserById(id);
 	        return new ResponseEntity<>(user, HttpStatus.OK);
 	    } catch (ResourceNotFoundException e) {
 	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -64,7 +65,7 @@ public class UserController {
 	//update usera
 	@PutMapping("/{id}")
 	public ResponseEntity<UserEntity> updateUser(@PathVariable Integer id, @RequestBody UserEntity userUpdates) {
-	    UserEntity updatedUser = userServiceImpl.updateUser(id, userUpdates);
+	    UserEntity updatedUser = userService.updateUser(id, userUpdates);
 	    if (updatedUser != null) {
 	        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 	    } else {
@@ -91,7 +92,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        UserEntity updatedUser = userServiceImpl.changeUserRole(id, newRole);
+        UserEntity updatedUser = userService.changeUserRole(id, newRole);
         if (updatedUser != null) {
             //korisnik uspešno ažuriran, vraća ažuriranog korisnika
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
@@ -106,7 +107,7 @@ public class UserController {
 	public ResponseEntity<?> changeUserPassword(@PathVariable Integer id, 
 	                                            @RequestParam("oldPassword") String oldPassword, 
 	                                            @RequestParam("newPassword") String newPassword) {
-	    UserEntity updatedUser = userServiceImpl.changeUserPassword(id, oldPassword, newPassword);
+	    UserEntity updatedUser = userService.changeUserPassword(id, oldPassword, newPassword);
 	    if (updatedUser != null) {
 	        return ResponseEntity.ok().build();
 	    } else {
@@ -117,7 +118,7 @@ public class UserController {
 //	//vrati usera po username
 	@GetMapping("/by-username/{username}")
 	public ResponseEntity<UserEntity> getUserByUsername(@PathVariable String username) {
-	    UserEntity user = userServiceImpl.getUserByUsername(username);
+	    UserEntity user = userService.getUserByUsername(username);
 	    if (user != null) {
 	        return ResponseEntity.ok(user);
 	    } else {

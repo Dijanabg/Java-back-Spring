@@ -18,24 +18,25 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iktpreobuka.project.entities.EOfferStatus;
 import com.iktpreobuka.project.entities.OfferEntity;
 import com.iktpreobuka.project.exceptions.ResourceNotFoundException;
-import com.iktpreobuka.project.services.OfferServiceImpl;
+import com.iktpreobuka.project.services.OfferService;
+
 
 @RestController
 @RequestMapping(value = "/project/offers")
 public class OfferController {
 	@Autowired
-	private OfferServiceImpl offerServiceImpl;
+	private OfferService offerService;
 
 
     @GetMapping
     public ResponseEntity<List<OfferEntity>> getAllOffers() {
-        List<OfferEntity> offers = offerServiceImpl.getAllOffers();
+        List<OfferEntity> offers = offerService.getAllOffers();
         return new ResponseEntity<>(offers, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<OfferEntity> createOffer(@RequestBody OfferEntity offer) {
-        OfferEntity savedOffer = offerServiceImpl.addNewOffer(offer);
+        OfferEntity savedOffer = offerService.addNewOffer(offer);
         return new ResponseEntity<>(savedOffer, HttpStatus.CREATED);
     }
 
@@ -43,7 +44,7 @@ public class OfferController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateOffer(@PathVariable Integer id, @RequestBody OfferEntity offerDetails) {
             try {
-                OfferEntity updatedOffer = offerServiceImpl.updateOffer(id, offerDetails);
+                OfferEntity updatedOffer = offerService.updateOffer(id, offerDetails);
                 return ResponseEntity.ok(updatedOffer);
             } catch (ResourceNotFoundException e) {
                 return ResponseEntity
@@ -55,7 +56,7 @@ public class OfferController {
     @GetMapping("/{id}")
     public ResponseEntity<OfferEntity> getOfferById(@PathVariable Integer id) {
         try {
-            OfferEntity offer = offerServiceImpl.getOfferById(id);
+            OfferEntity offer = offerService.getOfferById(id);
             return new ResponseEntity<>(offer, HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -65,7 +66,7 @@ public class OfferController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOffer(@PathVariable Integer id) {
     	try {
-            offerServiceImpl.deleteOffer(id);
+            offerService.deleteOffer(id);
             return ResponseEntity.ok().body("Offer with ID " + id + " has been deleted successfully.");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -74,14 +75,14 @@ public class OfferController {
 
     @GetMapping("/price-range")
     public ResponseEntity<List<OfferEntity>> findByPriceRange(@RequestParam Double lowerPrice, @RequestParam Double upperPrice) {
-        List<OfferEntity> offers = offerServiceImpl.findOffersByPriceRange(lowerPrice, upperPrice);
+        List<OfferEntity> offers = offerService.findOffersByPriceRange(lowerPrice, upperPrice);
         return new ResponseEntity<>(offers, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/status")
     public ResponseEntity<OfferEntity> changeOfferStatus(@PathVariable Integer id, @RequestParam EOfferStatus status) {
         try {
-            OfferEntity offer = offerServiceImpl.changeOfferStatus(id, status);
+            OfferEntity offer = offerService.changeOfferStatus(id, status);
             return new ResponseEntity<>(offer, HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
