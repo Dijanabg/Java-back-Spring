@@ -1,6 +1,5 @@
 package com.iktpreobuka.project.controllers;
 
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iktpreobuka.project.entities.EUserRole;
 import com.iktpreobuka.project.entities.UserEntity;
+import com.iktpreobuka.project.exceptions.ResourceNotFoundException;
 import com.iktpreobuka.project.repositories.UserRepository;
 import com.iktpreobuka.project.services.UserServiceImpl;
 
@@ -38,11 +38,21 @@ public class UserController {
     }
 	
 	//vrati usera po id
+//	@GetMapping("/{id}")
+//	public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id) {
+//		Optional<UserEntity> user = userServiceImpl.getUserById(id);
+//        return user.map(ResponseEntity::ok)
+//                   .orElseGet(() -> ResponseEntity.notFound().build());
+//	}
+	//sa hvatanjem izuzetka
 	@GetMapping("/{id}")
 	public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id) {
-		Optional<UserEntity> user = userServiceImpl.getUserById(id);
-        return user.map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+	    try {
+	        UserEntity user = userServiceImpl.getUserById(id);
+	        return new ResponseEntity<>(user, HttpStatus.OK);
+	    } catch (ResourceNotFoundException e) {
+	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	    }
 	}
 	
 	//vrati sve usere
@@ -104,7 +114,7 @@ public class UserController {
 	    }
 	}
 
-	//vrati usera po username
+//	//vrati usera po username
 	@GetMapping("/by-username/{username}")
 	public ResponseEntity<UserEntity> getUserByUsername(@PathVariable String username) {
 	    UserEntity user = userServiceImpl.getUserByUsername(username);
@@ -114,5 +124,5 @@ public class UserController {
 	        return ResponseEntity.notFound().build();
 	    }
 	}
-	 
+
 }

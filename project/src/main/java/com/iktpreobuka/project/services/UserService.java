@@ -1,7 +1,6 @@
 package com.iktpreobuka.project.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.iktpreobuka.project.entities.EUserRole;
 import com.iktpreobuka.project.entities.UserEntity;
@@ -9,7 +8,7 @@ import com.iktpreobuka.project.entities.UserEntity;
 
 public interface UserService {
 	UserEntity addNewUser(String name, String lastName, String email, String username, String password, EUserRole userRole);
-	Optional<UserEntity> getUserById(Integer id);
+	UserEntity getUserById(Integer id);
 	List<UserEntity> getAllUsers();
     UserEntity updateUser(Integer id, UserEntity userUpdates);
     boolean deleteUser(Integer id);

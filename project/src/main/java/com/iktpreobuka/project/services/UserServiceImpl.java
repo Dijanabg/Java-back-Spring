@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.iktpreobuka.project.entities.EUserRole;
 import com.iktpreobuka.project.entities.UserEntity;
+import com.iktpreobuka.project.exceptions.ResourceNotFoundException;
 import com.iktpreobuka.project.repositories.UserRepository;
 
 @Service
@@ -28,11 +29,16 @@ public class UserServiceImpl implements UserService{
 		return user;
 	}
 
+//	@Override
+//	public Optional<UserEntity> getUserById(Integer id) {
+//		return userRepository.findById(id);
+//		//bez obrade izuzetaka
+//	}
 	@Override
-	public Optional<UserEntity> getUserById(Integer id) {
-		return userRepository.findById(id);
-	}
-
+    public UserEntity getUserById(Integer id) {
+        return userRepository.findById(id).orElseThrow(() -> 
+            new ResourceNotFoundException("User not found for this id :: " + id));
+    }
 	@Override
 	public List<UserEntity> getAllUsers() {
 		return (List<UserEntity>) userRepository.findAll();
