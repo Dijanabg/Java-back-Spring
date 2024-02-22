@@ -15,4 +15,5 @@ public interface UserService {
     UserEntity changeUserRole(Integer id, EUserRole newRole);
     UserEntity changeUserPassword(Integer id, String oldPassword, String newPassword);
     UserEntity getUserByUsername(String username);
+    boolean isSeller(Integer userId);
 }

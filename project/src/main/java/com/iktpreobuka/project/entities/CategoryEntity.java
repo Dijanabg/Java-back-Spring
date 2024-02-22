@@ -1,12 +1,17 @@
 package com.iktpreobuka.project.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,6 +26,10 @@ public class CategoryEntity {
     private String categoryName;
 	@Column(name = "category_description", nullable = false)
     private String categoryDescription;
+	
+	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OfferEntity> offers = new ArrayList<>();
+	//orphanRemoval = true je opcija u JPA (Java Persistence API) koja se koristi u kontekstu veze između entiteta, konkretno za one veze koje su oznacene sa @OneToMany ili @OneToOne. Ova opcija omogućava automatsko brisanje "siročića" (orphan) entiteta kada se oni više ne referenciraju iz "roditeljskog" entiteta.
 	
 	public CategoryEntity() {
 		super();

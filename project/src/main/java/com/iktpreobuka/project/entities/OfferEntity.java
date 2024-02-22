@@ -1,5 +1,6 @@
 package com.iktpreobuka.project.entities;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -11,6 +12,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -26,9 +29,9 @@ public class OfferEntity {
 	@Column(name = "offer_description", nullable = false)
 	private String offerDescription;
 	@Column(name = "offer_created", nullable = false)
-	private Date offerCreated;
+	private LocalDate offerCreated;
 	@Column(name = "offer_expires", nullable = false)
-	private Date offerExpires;
+	private LocalDate offerExpires;
 	@Column(name = "regular_price", nullable = false)
 	private Double regularPrice;
 	@Column(name = "action_price", nullable = false)
@@ -43,11 +46,20 @@ public class OfferEntity {
 	@Enumerated(EnumType.STRING)
     @Column(name = "offer_status", nullable = false)
 	private EOfferStatus offerStatus;
+	
+	@ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoryEntity category;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+    
 	public OfferEntity() {
 		super();
 	}
-	public OfferEntity(Integer id, String offerName, String offerDescription, Date offerCreated,
-			Date offerExpires, Double regularPrice, Double actionPrice, String imagePath, Integer availableOffers,
+	public OfferEntity(Integer id, String offerName, String offerDescription, LocalDate offerCreated,
+			LocalDate offerExpires, Double regularPrice, Double actionPrice, String imagePath, Integer availableOffers,
 			Integer boughtOffers, EOfferStatus offerStatus) {
 		super();
 		this.id = id;
@@ -62,6 +74,20 @@ public class OfferEntity {
 		this.boughtOffers = boughtOffers;
 		this.offerStatus = offerStatus;
 	}
+	public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+    public CategoryEntity getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryEntity category) {
+        this.category = category;
+    }
 	public Integer getId() {
 		return id;
 	}
@@ -80,17 +106,17 @@ public class OfferEntity {
 	public void setOfferDescription(String offerDescription) {
 		this.offerDescription = offerDescription;
 	}
-	public Date getOfferCreated() {
+	public LocalDate getOfferCreated() {
 		return offerCreated;
 	}
-	public void setOfferCreated(Date offerCreated) {
+	public void setOfferCreated(LocalDate offerCreated) {
 		this.offerCreated = offerCreated;
 	}
-	public Date getOfferExpires() {
+	public LocalDate getOfferExpires() {
 		return offerExpires;
 	}
-	public void setOfferExpires(Date offerExpires) {
-		this.offerExpires = offerExpires;
+	public void setOfferExpires(LocalDate localDate) {
+		this.offerExpires = localDate;
 	}
 	public Double getRegularPrice() {
 		return regularPrice;

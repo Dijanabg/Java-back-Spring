@@ -115,4 +115,11 @@ public class UserServiceImpl implements UserService{
 	public UserEntity getUserByUsername(String username) {
 	    return userRepository.findByUsername(username).orElse(null);
 	}
+	@Override
+	public boolean isSeller(Integer userId) {
+        UserEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        return user.getUserRole() == EUserRole.ROLE_SELLER;
+    }
+	
 }

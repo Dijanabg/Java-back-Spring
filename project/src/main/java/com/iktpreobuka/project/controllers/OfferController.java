@@ -1,5 +1,6 @@
 package com.iktpreobuka.project.controllers;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +35,26 @@ public class OfferController {
         return new ResponseEntity<>(offers, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<OfferEntity> createOffer(@RequestBody OfferEntity offer) {
-        OfferEntity savedOffer = offerService.addNewOffer(offer);
-        return new ResponseEntity<>(savedOffer, HttpStatus.CREATED);
+    @PostMapping("/{categoryId}/seller/{sellerId}")
+    public ResponseEntity<?> addOfferWithCategoryAndSeller(@PathVariable Integer categoryId, @PathVariable Integer sellerId, @RequestBody OfferEntity offerDetails) throws AccessDeniedException {
+    	try {
+            OfferEntity newOffer = offerService.addOfferWithCategoryAndSeller(categoryId, sellerId, offerDetails);
+            return new ResponseEntity<>(newOffer, HttpStatus.CREATED);
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/category/{categoryId}")
     public ResponseEntity<?> updateOffer(@PathVariable Integer id, @RequestBody OfferEntity offerDetails) {
             try {
                 OfferEntity updatedOffer = offerService.updateOffer(id, offerDetails);
                 return ResponseEntity.ok(updatedOffer);
             } catch (ResourceNotFoundException e) {
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(null); // Možete prilagoditi telo odgovora za grešku ako želite
+            	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
             }
     }
 
@@ -89,3 +94,4 @@ public class OfferController {
         }
     }
 }
+
