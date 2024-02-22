@@ -23,7 +23,9 @@ public interface AddressDao {
 
 	public List<AddressEntity> findByCountrySorted(String country);
 
+	void addUserToAddress(Integer addressId, Integer userId);
 	
+    void removeUserFromAddress(Integer userId);
 
 	
 

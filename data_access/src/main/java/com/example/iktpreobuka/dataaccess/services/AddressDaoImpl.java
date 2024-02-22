@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.iktpreobuka.dataaccess.entities.AddressEntity;
+import com.example.iktpreobuka.dataaccess.entities.UserEntity;
 import com.example.iktpreobuka.dataaccess.repositories.AddressRepository;
+import com.example.iktpreobuka.dataaccess.repositories.UserRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -19,7 +21,8 @@ public class AddressDaoImpl implements AddressDao{
 	
 	@Autowired
 	private AddressRepository addressRepository;
-	
+	@Autowired
+	private UserRepository userRepository;
 	@PersistenceContext
 	private EntityManager em;
 	@SuppressWarnings("unchecked")
@@ -72,6 +75,24 @@ public class AddressDaoImpl implements AddressDao{
 	public List<AddressEntity> findByCountrySorted(String country) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	public void addUserToAddress(Integer addressId, Integer userId) {
+	    AddressEntity address = addressRepository.findById(addressId)
+	            .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
+	    UserEntity user = userRepository.findById(userId)
+	            .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+	    
+	    // Pretpostavljamo da imate seter u UserEntity koji postavlja adresu
+	    user.setAddress(address);
+	    userRepository.save(user);
+	}
+
+	public void removeUserFromAddress(Integer userId) {
+	    UserEntity user = userRepository.findById(userId)
+	            .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+	    
+	    user.setAddress(null);
+	    userRepository.save(user);
 	}
 	
 }
