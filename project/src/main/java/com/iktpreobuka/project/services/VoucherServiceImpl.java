@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.iktpreobuka.project.entities.OfferEntity;
 import com.iktpreobuka.project.entities.UserEntity;
@@ -12,6 +13,7 @@ import com.iktpreobuka.project.repositories.OfferRepository;
 import com.iktpreobuka.project.repositories.UserRepository;
 import com.iktpreobuka.project.repositories.VoucherRepository;
 
+@Service
 public class VoucherServiceImpl implements VoucherService{
 	@Autowired
     private VoucherRepository voucherRepository;
