@@ -15,17 +15,46 @@ public class UserEntity {
     private String name;
 	@Column(nullable = false)
     private String email;
+	@Column(nullable = false)
+    private Integer costs;
+	@Column(nullable = false)
+    private String city;
+	
+    public String getCity() {
+		return city;
+	}
 
-    public UserEntity() {
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public UserEntity() {
 		super();
 	}
 
 	public UserEntity(String name, String email) {
-        this.name = name;
-        this.email = email;
+		super();
+		this.name = name;
+		this.email = email;
+	}
+
+	public Integer getCosts() {
+		return costs;
+	}
+
+	public void setCosts(Integer costs) {
+		this.costs = costs;
+	}
+
+
+	public Integer getId() {
+        return id;
     }
 
-    // Getters and setters
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
     public String getName() {
         return name;
     }
@@ -41,5 +70,12 @@ public class UserEntity {
     public void setEmail(String email) {
         this.email = email;
     }
+
+	@Override
+	public String toString() {
+		return "UserEntity [id=" + id + ", name=" + name + ", email=" + email + ", costs=" + costs + ", city=" + city
+				+ "]";
+	}
+    
 }
 

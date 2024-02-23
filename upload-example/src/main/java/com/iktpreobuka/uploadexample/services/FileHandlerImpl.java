@@ -3,7 +3,6 @@ package com.iktpreobuka.uploadexample.services;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ public class FileHandlerImpl implements FileHandler{
 	@Autowired
 	public UserRepository userRepository;
 	
-	private static String UPLOADED_FOLDER = "C:\\temp\\";
+	//private static String UPLOADED_FOLDER = "C:\\temp\\";
 
 //	@Override
 //	public String singleFileUpload(MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
@@ -52,16 +51,24 @@ public class FileHandlerImpl implements FileHandler{
 	            String line;
 	            while ((line = br.readLine()) != null) {
 	                String[] tokens = line.split(",");
-	                if (tokens.length == 2) {
+	                if (tokens.length >= 3) {
 	                    String name = tokens[0];
 	                    String email = tokens[1];
+	                    String city = tokens[2]; // Pretpostavka da je grad treći token
 
-	                    // Provera da li email već postoji u bazi
-	                    boolean emailExists = userRepository.findByEmail(email).isPresent(); // Pretpostavka da postoji metoda findByEmail
+	                    Integer costs = 0;
+	                    if (city.equalsIgnoreCase("Novi Sad")) {
+	                        costs = 5000;
+	                    } else if (city.equalsIgnoreCase("Beograd")) {
+	                        costs = 10000;
+	                    }
 
-	                    // Ako email ne postoji, kreiraj novog korisnika i sačuvaj u bazi
+	                    List<UserEntity> userEntityList = (List<UserEntity>) userRepository.findAll();
+	                    boolean emailExists = userEntityList.stream().anyMatch(userEntity -> userEntity.getEmail().equals(email));
+
 	                    if (!emailExists) {
 	                        UserEntity user = new UserEntity(name, email);
+	                        user.setCosts(costs); // Postavljanje troškova na osnovu grada
 	                        userRepository.save(user);
 	                    }
 	                }
@@ -71,5 +78,6 @@ public class FileHandlerImpl implements FileHandler{
 	            redirectAttributes.addFlashAttribute("message", "Error during file upload.");
 	        }
 	            return "redirect:/uploadStatus";
-	  }
+	 }
+	 
 }
