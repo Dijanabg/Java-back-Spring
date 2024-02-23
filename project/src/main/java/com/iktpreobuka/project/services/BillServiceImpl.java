@@ -34,31 +34,53 @@ public class BillServiceImpl implements BillService {
     
     @Override
     public BillEntity addBill(Integer offerId, Integer buyerId, boolean paymentMade, boolean paymentCancelled, LocalDate billCreated) {
-        Optional<OfferEntity> offer = offerRepository.findById(offerId);
+        Optional<OfferEntity> offerf = offerRepository.findById(offerId);
         Optional<UserEntity> buyer = userRepository.findById(buyerId);
-        if (offer.isPresent() && buyer.isPresent()) {
-            BillEntity bill = new BillEntity();
-            bill.setOffer(offer.get());
-            bill.setUser(buyer.get()); // Ako je veza između korisnika i računa postavljena u entitetu BillEntity
-            bill.setPaymentMade(paymentMade);
-            bill.setPaymentCanceled(paymentCancelled);
-            bill.setBillCreated(billCreated);
-            return billRepository.save(bill);
+        if (offerf.isPresent() && buyer.isPresent()) {
+        	OfferEntity offer = offerf.get();
+            
+            // da li postoje ponude pre nego što napravi racun
+            if(offer.getAvailableOffers() > 0) {
+                // Ažuriraj broj dostupnih i kupljenih ponuda
+                offer.setAvailableOffers(offer.getAvailableOffers() - 1);
+                offer.setBoughtOffers(offer.getBoughtOffers() + 1);
+                offerRepository.save(offer); // Sačuvaj ažuriranu ponudu
+	            BillEntity bill = new BillEntity();
+	            bill.setOffer(offerf.get());
+	            bill.setUser(buyer.get()); // Ako je veza između korisnika i računa postavljena u entitetu BillEntity
+	            bill.setPaymentMade(paymentMade);
+	            bill.setPaymentCanceled(paymentCancelled);
+	            bill.setBillCreated(billCreated);
+	            return billRepository.save(bill);
+	        }
+	        else {
+	            throw new RuntimeException("No available offers left for this offer");
+	        }
+        } else {
+            throw new RuntimeException("Offer or buyer not found.");
         }
-        // Handle case where offer or buyer does not exist
-        return null;
     }
 
     @Override
-    public BillEntity updateBill(Integer id, Boolean paymentMade, Boolean paymentCanceled) {
-        Optional<BillEntity> bill = billRepository.findById(id);
-        if (bill.isPresent()) {
-            bill.get().setPaymentMade(paymentMade);
-            bill.get().setPaymentCanceled(paymentCanceled);
-            return billRepository.save(bill.get());
-        }
-        // Handle case where bill does not exist
-        return null;
+    public BillEntity updateBill(Integer id, Boolean paymentMade, Boolean paymentCanceled, LocalDate billCreated) {
+    	//me znam kako s optional
+    	BillEntity bill = billRepository.findById(id).orElseThrow(() -> new RuntimeException("Bill not found."));
+        	// Provjeri da li je došlo do promene statusa računa na otkazano
+    	if (!bill.getPaymentCanceled() && paymentCanceled) {
+                // Ako je račun prethodno bio aktivan, a sada se otkazuje
+                
+                OfferEntity offer = bill.getOffer();
+                // Povećaj broj dostupnih i smanji broj kupljenih ponuda
+                offer.setAvailableOffers(offer.getAvailableOffers() + 1);
+                offer.setBoughtOffers(offer.getBoughtOffers() - 1);
+                offerRepository.save(offer); // Sačuvaj ažuriranu ponudu
+            }
+    	bill.setPaymentMade(paymentMade);
+        bill.setPaymentCanceled(paymentCanceled);
+        bill.setBillCreated(billCreated);
+           
+        return billRepository.save(bill);
+
     }
 
     @Override

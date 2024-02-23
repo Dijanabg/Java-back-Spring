@@ -10,7 +10,7 @@ public interface BillService{
 	
 	BillEntity addBill(Integer offerId, Integer buyerId, boolean paymentMade, boolean paymentCancelled, LocalDate billCreated);
 
-    BillEntity updateBill(Integer id, Boolean paymentMade, Boolean paymentCancelled);
+    BillEntity updateBill(Integer id, Boolean paymentMade, Boolean paymentCancelled, LocalDate billCreated);
 
     void deleteBill(Integer id);
 
