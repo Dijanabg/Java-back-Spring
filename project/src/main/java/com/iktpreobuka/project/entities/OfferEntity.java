@@ -60,6 +60,9 @@ public class OfferEntity {
     @OneToMany(mappedBy = "offer", fetch = FetchType.LAZY)
     private List<BillEntity> bills;
     
+//    @OneToMany(mappedBy = "offer")
+//    private List<VoucherEntity> vouchers;
+    
 	public List<BillEntity> getBills() {
 		return bills;
 	}

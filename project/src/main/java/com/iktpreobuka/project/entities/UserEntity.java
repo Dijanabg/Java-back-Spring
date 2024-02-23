@@ -42,6 +42,9 @@ public class UserEntity {
 	    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	    private List<OfferEntity> offers = new ArrayList<>();
 	    
+//	    @OneToMany(mappedBy = "user")
+//	    private List<VoucherEntity> vouchers;
+	    
 		public UserEntity() {
 			super();
 		}
