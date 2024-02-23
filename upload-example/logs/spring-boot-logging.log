@@ -1,0 +1,54 @@
+2024-02-22T18:42:30.843+01:00  INFO 7880 --- [restartedMain] c.i.u.UploadExampleApplication           : Starting UploadExampleApplication using Java 17.0.9 with PID 7880 (C:\Users\dijan\git\backspring\upload-example\target\classes started by Dijana in C:\Users\dijan\git\backspring\upload-example)
+2024-02-22T18:42:30.864+01:00  INFO 7880 --- [restartedMain] c.i.u.UploadExampleApplication           : No active profile set, falling back to 1 default profile: "default"
+2024-02-22T18:42:30.946+01:00  INFO 7880 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-02-22T18:42:30.947+01:00  INFO 7880 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-02-22T18:42:32.117+01:00  INFO 7880 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-02-22T18:42:32.215+01:00  INFO 7880 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 77 ms. Found 1 JPA repository interface.
+2024-02-22T18:42:33.166+01:00  INFO 7880 --- [restartedMain] o.s.b.w.e.t.TomcatWebServer              : Tomcat initialized with port 8080 (http)
+2024-02-22T18:42:33.204+01:00  INFO 7880 --- [restartedMain] o.a.c.c.StandardService                  : Starting service [Tomcat]
+2024-02-22T18:42:33.205+01:00  INFO 7880 --- [restartedMain] o.a.c.c.StandardEngine                   : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-02-22T18:42:33.309+01:00  INFO 7880 --- [restartedMain] o.a.c.c.C.[.[.[/]                        : Initializing Spring embedded WebApplicationContext
+2024-02-22T18:42:33.311+01:00  INFO 7880 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2362 ms
+2024-02-22T18:42:34.250+01:00  INFO 7880 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-02-22T18:42:34.320+01:00  INFO 7880 --- [restartedMain] c.z.h.HikariDataSource                   : HikariPool-1 - Starting...
+2024-02-22T18:42:34.844+01:00  INFO 7880 --- [restartedMain] c.z.h.p.HikariPool                       : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@79a2c4a2
+2024-02-22T18:42:34.848+01:00  INFO 7880 --- [restartedMain] c.z.h.HikariDataSource                   : HikariPool-1 - Start completed.
+2024-02-22T18:42:36.600+01:00  INFO 7880 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-02-22T18:42:37.183+01:00  WARN 7880 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-02-22T18:42:37.803+01:00  INFO 7880 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2024-02-22T18:42:37.873+01:00  INFO 7880 --- [restartedMain] o.s.b.w.e.t.TomcatWebServer              : Tomcat started on port 8080 (http) with context path ''
+2024-02-22T18:42:37.905+01:00  INFO 7880 --- [restartedMain] c.i.u.UploadExampleApplication           : Started UploadExampleApplication in 7.908 seconds (process running for 9.61)
+2024-02-22T18:44:25.937+01:00  INFO 7880 --- [RMI TCP Connection(5)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2024-02-22T18:44:25.964+01:00  INFO 7880 --- [RMI TCP Connection(5)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-02-22T18:44:25.969+01:00  INFO 7880 --- [RMI TCP Connection(5)-127.0.0.1] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown initiated...
+2024-02-22T18:44:25.994+01:00  INFO 7880 --- [RMI TCP Connection(5)-127.0.0.1] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown completed.
+2024-02-22T18:44:29.829+01:00  INFO 12012 --- [restartedMain] c.i.u.UploadExampleApplication           : Starting UploadExampleApplication using Java 17.0.9 with PID 12012 (C:\Users\dijan\git\backspring\upload-example\target\classes started by Dijana in C:\Users\dijan\git\backspring\upload-example)
+2024-02-22T18:44:29.854+01:00  INFO 12012 --- [restartedMain] c.i.u.UploadExampleApplication           : No active profile set, falling back to 1 default profile: "default"
+2024-02-22T18:44:29.932+01:00  INFO 12012 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-02-22T18:44:29.932+01:00  INFO 12012 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-02-22T18:44:31.082+01:00  INFO 12012 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-02-22T18:44:31.177+01:00  INFO 12012 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 79 ms. Found 1 JPA repository interface.
+2024-02-22T18:44:32.153+01:00  INFO 12012 --- [restartedMain] o.s.b.w.e.t.TomcatWebServer              : Tomcat initialized with port 8080 (http)
+2024-02-22T18:44:32.181+01:00  INFO 12012 --- [restartedMain] o.a.c.c.StandardService                  : Starting service [Tomcat]
+2024-02-22T18:44:32.181+01:00  INFO 12012 --- [restartedMain] o.a.c.c.StandardEngine                   : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-02-22T18:44:32.294+01:00  INFO 12012 --- [restartedMain] o.a.c.c.C.[.[.[/]                        : Initializing Spring embedded WebApplicationContext
+2024-02-22T18:44:32.295+01:00  INFO 12012 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2361 ms
+2024-02-22T18:44:33.215+01:00  INFO 12012 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-02-22T18:44:33.270+01:00  INFO 12012 --- [restartedMain] c.z.h.HikariDataSource                   : HikariPool-1 - Starting...
+2024-02-22T18:44:33.794+01:00  INFO 12012 --- [restartedMain] c.z.h.p.HikariPool                       : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@55628d15
+2024-02-22T18:44:33.797+01:00  INFO 12012 --- [restartedMain] c.z.h.HikariDataSource                   : HikariPool-1 - Start completed.
+2024-02-22T18:44:35.626+01:00  INFO 12012 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-02-22T18:44:36.179+01:00  WARN 12012 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-02-22T18:44:36.784+01:00  INFO 12012 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2024-02-22T18:44:36.851+01:00  INFO 12012 --- [restartedMain] o.s.b.w.e.t.TomcatWebServer              : Tomcat started on port 8080 (http) with context path ''
+2024-02-22T18:44:36.876+01:00  INFO 12012 --- [restartedMain] c.i.u.UploadExampleApplication           : Started UploadExampleApplication in 7.825 seconds (process running for 9.452)
+2024-02-22T18:45:05.135+01:00  INFO 12012 --- [http-nio-8080-exec-1] o.a.c.c.C.[.[.[/]                        : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-02-22T18:45:05.135+01:00  INFO 12012 --- [http-nio-8080-exec-1] o.s.w.s.DispatcherServlet                : Initializing Servlet 'dispatcherServlet'
+2024-02-22T18:45:05.137+01:00  INFO 12012 --- [http-nio-8080-exec-1] o.s.w.s.DispatcherServlet                : Completed initialization in 1 ms
+2024-02-22T18:45:15.097+01:00  INFO 12012 --- [http-nio-8080-exec-3] c.i.u.c.UploadController                 : This is an info message
+2024-02-22T18:45:15.099+01:00  WARN 12012 --- [http-nio-8080-exec-3] c.i.u.c.UploadController                 : This is a warn message
+2024-02-22T18:45:15.099+01:00 ERROR 12012 --- [http-nio-8080-exec-3] c.i.u.c.UploadController                 : This is an error message
+2024-02-22T18:53:13.183+01:00  INFO 12012 --- [RMI TCP Connection(12)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2024-02-22T18:53:13.215+01:00  INFO 12012 --- [RMI TCP Connection(12)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-02-22T18:53:13.222+01:00  INFO 12012 --- [RMI TCP Connection(12)-127.0.0.1] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown initiated...
+2024-02-22T18:53:13.236+01:00  INFO 12012 --- [RMI TCP Connection(12)-127.0.0.1] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown completed.

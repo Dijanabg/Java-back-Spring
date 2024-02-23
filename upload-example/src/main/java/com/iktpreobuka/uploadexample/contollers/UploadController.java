@@ -12,17 +12,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.iktpreobuka.uploadexample.services.FileHandler;
 
-
+import org.slf4j.Logger; 
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping(path = "/")
 public class UploadController {
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
+	
 	@Autowired
 	private FileHandler fileHandler;
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/upload")
 	public String singleFileUpload(@RequestParam("file") MultipartFile file,
-		RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes) {
+		logger.debug("This is a debug message");
+		logger.info("This is an info message");
+		logger.warn("This is a warn message");
+		logger.error("This is an error message");
 		String result = null;
 		try {
 			result = fileHandler.singleFileUpload(file, redirectAttributes);
@@ -30,6 +37,7 @@ public class UploadController {
 			e.printStackTrace();
 		}
 		return result;
+		
 	}
 	@RequestMapping(method = RequestMethod.GET)
 	public String index() {
@@ -39,4 +47,5 @@ public class UploadController {
 	public String uploadStatus() {
 		return "uploadStatus";
 	}
+	
 }
