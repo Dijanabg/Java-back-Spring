@@ -10,6 +10,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -56,6 +57,28 @@ public class UserEntity {
 			this.password = password;
 			this.email = email;
 			this.userRole = userRole;
+		}
+
+		@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	    private List<BillEntity> bills;
+		
+		public List<OfferEntity> getOffers() {
+			return offers;
+		}
+
+
+		public void setOffers(List<OfferEntity> offers) {
+			this.offers = offers;
+		}
+
+
+		public List<BillEntity> getBills() {
+			return bills;
+		}
+
+
+		public void setBills(List<BillEntity> bills) {
+			this.bills = bills;
 		}
 
 
