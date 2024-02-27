@@ -16,6 +16,11 @@ public interface OfferService {
     List<OfferEntity> findOffersByPriceRange(Double lowerPrice, Double upperPrice);
     OfferEntity changeOfferStatus(Integer id, EOfferStatus newStatus) throws ResourceNotFoundException;
     OfferEntity addOfferWithCategoryAndSeller(Integer categoryId, Integer sellerId, OfferEntity offerDetails) throws AccessDeniedException;
+    OfferEntity updateOfferAvailability(Integer offerId, Integer boughtAmount);
+    
+    boolean existsActiveOffersForCategory(Integer categoryId);
+    
+    OfferEntity updateOfferImage(Integer id, String imagePath);
 }
 
 

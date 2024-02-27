@@ -2,8 +2,11 @@ package com.iktpreobuka.project.services;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,8 @@ import com.iktpreobuka.project.exceptions.ResourceNotFoundException;
 import com.iktpreobuka.project.repositories.CategoryRepository;
 import com.iktpreobuka.project.repositories.OfferRepository;
 import com.iktpreobuka.project.repositories.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class OfferServiceImpl implements OfferService{
@@ -51,7 +56,7 @@ public class OfferServiceImpl implements OfferService{
     		    offer.setUser(user);
     		    
     		    // Postavljanje datuma kreiranja i isteka ponude
-    		    LocalDate today = LocalDate.now();
+    		    LocalDateTime today = LocalDateTime.now();
     		    offer.setOfferCreated(today);
     		    offer.setOfferExpires(today.plusDays(10));
 
@@ -135,9 +140,65 @@ public class OfferServiceImpl implements OfferService{
 
         offerDetails.setUser(seller);
         offerDetails.setCategory(category);
-        offerDetails.setOfferCreated(LocalDate.now());
-        offerDetails.setOfferExpires(LocalDate.now().plusDays(10));
+        offerDetails.setOfferCreated(LocalDateTime.now());
+        offerDetails.setOfferExpires(LocalDateTime.now().plusDays(10));
 
         return offerRepository.save(offerDetails);
     }
+    
+    @Override
+ // Metoda za izmenu broja kupljenih/dostupnih ponuda
+    public OfferEntity updateOfferAvailability(Integer offerId, Integer boughtAmount) {
+        Optional<OfferEntity> offerOptional = offerRepository.findById(offerId);
+        if (offerOptional.isPresent()) {
+            OfferEntity offer = offerOptional.get();
+            // Pretpostavimo da imate settere i gettere za boughtOffers i availableOffers
+            int currentBought = offer.getBoughtOffers();
+            int currentAvailable = offer.getAvailableOffers();
+
+            // Ažuriranje broja kupljenih i dostupnih ponuda
+            offer.setBoughtOffers(currentBought + boughtAmount);
+            offer.setAvailableOffers(currentAvailable - boughtAmount);
+
+            // Provera da li je broj dostupnih ponuda manji od nule
+            if (offer.getAvailableOffers() < 0) {
+                throw new RuntimeException("There are not enough available offers for this operation.");
+            }
+
+            // Sačuvaj izmenjenu ponudu
+            return offerRepository.save(offer);
+        } else {
+            throw new EntityNotFoundException("Offer with ID " + offerId + " was not found.");
+        }
+    }
+    @Override
+    public boolean existsActiveOffersForCategory(Integer categoryId) {
+        return offerRepository.countByCategory_IdAndOfferExpiresAfter(categoryId, LocalDate.now()) > 0;
+    }
+    
+    @Override
+    //UPDATE iMAGE
+    public OfferEntity updateOfferImage(Integer id, String imagePath) {
+        Optional<OfferEntity> offerOpt = offerRepository.findById(id);
+        if (!offerOpt.isPresent()) {
+            return null;
+        }
+        OfferEntity offer = offerOpt.get();
+        offer.setImagePath(imagePath); // Pretpostavljamo da OfferEntity ima polje imagePath
+        offerRepository.save(offer);
+        return offer;
+    }
+    
+//    public void markExpiredOffers() {
+//    	List<OfferEntity> offers = StreamSupport.stream(offerRepository.findAll().spliterator(), false)
+//                .collect(Collectors.toList());
+//        LocalDate today = LocalDate.now();
+//        offers.forEach(offer -> {
+//            if (offer.getOfferExpires().isBefore(today) && !offer.isExpired()) {
+//                offer.setExpired(true);//zaboravim da nemam polje true false 
+//                offerRepository.save(offer);
+//                billService.cancelBillsForExpiredOffer(offer.getId());
+//            }
+//        });
+//    }
 }

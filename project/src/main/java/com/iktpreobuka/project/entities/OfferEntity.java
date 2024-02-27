@@ -1,9 +1,13 @@
 package com.iktpreobuka.project.entities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,10 +34,18 @@ public class OfferEntity {
 	private String offerName;
 	@Column(name = "offer_description", nullable = false)
 	private String offerDescription;
+	
+	@JsonFormat(
+			shape = JsonFormat.Shape.STRING,
+			pattern = "dd-MM-yyyy HH:mm:ss")
 	@Column(name = "offer_created", nullable = false)
-	private LocalDate offerCreated;
+	private LocalDateTime offerCreated;
+	
+	@JsonFormat(
+			shape = JsonFormat.Shape.STRING,
+			pattern = "dd-MM-yyyy HH:mm:ss")
 	@Column(name = "offer_expires", nullable = false)
-	private LocalDate offerExpires;
+	private LocalDateTime offerExpires;
 	@Column(name = "regular_price", nullable = false)
 	private Double regularPrice;
 	@Column(name = "action_price", nullable = false)
@@ -57,6 +69,7 @@ public class OfferEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "offer", fetch = FetchType.LAZY)
     private List<BillEntity> bills;
     
@@ -72,8 +85,8 @@ public class OfferEntity {
 	public OfferEntity() {
 		super();
 	}
-	public OfferEntity(Integer id, String offerName, String offerDescription, LocalDate offerCreated,
-			LocalDate offerExpires, Double regularPrice, Double actionPrice, String imagePath, Integer availableOffers,
+	public OfferEntity(Integer id, String offerName, String offerDescription,LocalDateTime offerCreated,
+			LocalDateTime offerExpires, Double regularPrice, Double actionPrice, String imagePath, Integer availableOffers,
 			Integer boughtOffers, EOfferStatus offerStatus) {
 		super();
 		this.id = id;
@@ -120,18 +133,19 @@ public class OfferEntity {
 	public void setOfferDescription(String offerDescription) {
 		this.offerDescription = offerDescription;
 	}
-	public LocalDate getOfferCreated() {
+	public LocalDateTime getOfferCreated() {
 		return offerCreated;
 	}
-	public void setOfferCreated(LocalDate offerCreated) {
+	public void setOfferCreated(LocalDateTime offerCreated) {
 		this.offerCreated = offerCreated;
 	}
-	public LocalDate getOfferExpires() {
+	public LocalDateTime getOfferExpires() {
 		return offerExpires;
 	}
-	public void setOfferExpires(LocalDate localDate) {
+	public void setOfferExpires(LocalDateTime localDate) {
 		this.offerExpires = localDate;
 	}
+	
 	public Double getRegularPrice() {
 		return regularPrice;
 	}

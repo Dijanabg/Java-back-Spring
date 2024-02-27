@@ -74,12 +74,13 @@ public class UserController {
 	}
 	//delete user
 	@DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable Integer id) {
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
+    public boolean deleteUser(@PathVariable Integer id) {
+//        if (userRepository.existsById(id)) {
+//            userRepository.deleteById(id);
+//            return ResponseEntity.ok().build();
+//        }
+//        return ResponseEntity.notFound().build();
+		return userService.deleteUser(id);
     }
 	//menjanje role po Id
 	@PutMapping("/change/{id}/role/{role}")

@@ -1,6 +1,6 @@
 package com.iktpreobuka.project.services;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,26 +28,31 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
+	public Optional<BillEntity> findBillById(Integer id) {
+	    return billRepository.findById(id);
+	}
+    @Override
     public Iterable<BillEntity> findAllBills() {
         return billRepository.findAll();
     }
     
+    //dodavanje racuna
     @Override
-    public BillEntity addBill(Integer offerId, Integer buyerId, boolean paymentMade, boolean paymentCancelled, LocalDate billCreated) {
+    public BillEntity addBill(Integer offerId, Integer buyerId, boolean paymentMade, boolean paymentCancelled, LocalDateTime billCreated) {
         Optional<OfferEntity> offerf = offerRepository.findById(offerId);
         Optional<UserEntity> buyer = userRepository.findById(buyerId);
         if (offerf.isPresent() && buyer.isPresent()) {
         	OfferEntity offer = offerf.get();
             
-            // da li postoje ponude pre nego što napravi racun
+            // da li postoje ponude pre nego sto napravi racun
             if(offer.getAvailableOffers() > 0) {
-                // Ažuriraj broj dostupnih i kupljenih ponuda
+                // azuriranje broja dostupnih i kupljenih ponuda
                 offer.setAvailableOffers(offer.getAvailableOffers() - 1);
                 offer.setBoughtOffers(offer.getBoughtOffers() + 1);
-                offerRepository.save(offer); // Sačuvaj ažuriranu ponudu
+                offerRepository.save(offer); // sacuvaj azuriranu ponudu
 	            BillEntity bill = new BillEntity();
 	            bill.setOffer(offerf.get());
-	            bill.setUser(buyer.get()); // Ako je veza između korisnika i računa postavljena u entitetu BillEntity
+	            bill.setUser(buyer.get());
 	            bill.setPaymentMade(paymentMade);
 	            bill.setPaymentCanceled(paymentCancelled);
 	            bill.setBillCreated(billCreated);
@@ -62,7 +67,7 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public BillEntity updateBill(Integer id, Boolean paymentMade, Boolean paymentCanceled, LocalDate billCreated) {
+    public BillEntity updateBill(Integer id, Boolean paymentMade, Boolean paymentCanceled, LocalDateTime billCreated) {
     	//me znam kako s optional
     	BillEntity bill = billRepository.findById(id).orElseThrow(() -> new RuntimeException("Bill not found."));
         	// Provjeri da li je došlo do promene statusa računa na otkazano
@@ -87,7 +92,7 @@ public class BillServiceImpl implements BillService {
     public void deleteBill(Integer id) {
         billRepository.deleteById(id);
     }
-
+    
     @Override
     public List<BillEntity> findBillsByBuyer(Integer buyerId) {
     	return billRepository.findByUser_Id(buyerId);
@@ -99,7 +104,27 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<BillEntity> findBillsByDate(LocalDate startDate, LocalDate endDate) {
+    public List<BillEntity> findBillsByDate(LocalDateTime startDate, LocalDateTime endDate) {
     	 return billRepository.findByBillCreatedBetween(startDate, endDate);
     }
+    @Override
+    public List<BillEntity> findBillsInPeriod(LocalDateTime startDate, LocalDateTime endDate) {
+        return billRepository.findAllByBillCreatedBetween(startDate, endDate);
+    }
+    
+    @Override
+    public boolean existsActiveBillsForCategory(Integer categoryId) {
+        // Pretpostavlja se da BillRepository ima metodu koja vraća broj aktivnih računa za ponude iz kategorije
+        return billRepository.countByOfferCategoryIdAndBillCreatedBefore(categoryId, LocalDateTime.now()) > 0;
+    }
+    
+    @Override
+    public void cancelBillsForExpiredOffer(Integer offerId) {
+        List<BillEntity> bills = billRepository.findAllByOfferId(offerId);
+        for (BillEntity bill : bills) {
+            bill.setPaymentCanceled(true);
+            billRepository.save(bill);
+        }
+    }
+
 }

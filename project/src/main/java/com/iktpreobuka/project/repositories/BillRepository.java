@@ -1,6 +1,7 @@
 package com.iktpreobuka.project.repositories;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -15,5 +16,11 @@ public interface BillRepository extends CrudRepository<BillEntity, Integer>{
     @Query("SELECT b FROM BillEntity b WHERE b.offer.category.id = :categoryId")
     List<BillEntity> findBillsByCategory(@Param("categoryId") Integer categoryId);
 
-    List<BillEntity> findByBillCreatedBetween(LocalDate startDate, LocalDate endDate);
+    List<BillEntity> findByBillCreatedBetween(LocalDateTime startDate, LocalDateTime endDate);
+    
+    List<BillEntity> findAllByBillCreatedBetween(LocalDateTime startDate, LocalDateTime endDate);
+    
+    long countByOfferCategoryIdAndBillCreatedBefore(Integer categoryId, LocalDateTime beforeDate);
+    
+    List<BillEntity> findAllByOfferId(Integer offerId);
 }

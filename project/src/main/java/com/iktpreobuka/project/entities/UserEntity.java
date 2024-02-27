@@ -3,6 +3,7 @@ package com.iktpreobuka.project.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
@@ -39,7 +40,8 @@ public class UserEntity {
 	    @Column(name = "user_role", nullable = false)
 	    private EUserRole userRole;
 	    
-	    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	    @JsonIgnore
+	    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	    private List<OfferEntity> offers = new ArrayList<>();
 	    
 //	    @OneToMany(mappedBy = "user")
@@ -61,7 +63,7 @@ public class UserEntity {
 			this.email = email;
 			this.userRole = userRole;
 		}
-
+		@JsonIgnore
 		@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	    private List<BillEntity> bills;
 		
