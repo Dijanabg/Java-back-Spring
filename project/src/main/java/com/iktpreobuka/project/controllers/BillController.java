@@ -53,7 +53,6 @@ public class BillController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 }
-//******************** !!ne update available and bought offers
     // Izmena računa
     @PutMapping("/{id}")
     @Transactional
