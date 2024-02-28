@@ -43,39 +43,27 @@ public class BillController {
     }
  // Dodavanje racuna
     @PostMapping("/{offerId}/buyer/{buyerId}")
-    public ResponseEntity<BillEntity> addBill(@PathVariable Integer offerId, @PathVariable Integer buyerId, 
-                                              @RequestBody BillEntity bill) {
-    	BillEntity newBill = billService.addBill(offerId, buyerId, bill.getPaymentMade(), bill.getPaymentCanceled(), bill.getBillCreated());
-    	// azuriranje dostupnosti ponude nakon dodavanja racuna
-        offerService.updateOfferAvailability(offerId, -1); // pretpostavka je da se smanjuje za 1 dostupna ponuda
-        return ResponseEntity.ok(newBill);
-    }
+    public ResponseEntity<BillEntity> addBill(@PathVariable Integer offerId,
+            @PathVariable Integer buyerId,
+            @RequestBody BillEntity bill) {
+			try {
+				BillEntity newBill = billService.addBill(offerId, buyerId, bill.getPaymentMade(), bill.getPaymentCanceled(), bill.getBillCreated());
+				return new ResponseEntity<>(newBill, HttpStatus.CREATED);
+			} catch (RuntimeException ex) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+}
 //******************** !!ne update available and bought offers
     // Izmena računa
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<BillEntity> updateBill(@PathVariable Integer id, @RequestBody BillEntity bill) {
-    	// Preuzimanje trenutnog stanja računa pre izmene
-    	Optional<BillEntity> currentBillOpt = billService.findBillById(id);
-
-        if (!currentBillOpt.isPresent()) {
-            return ResponseEntity.notFound().build();
+    	try {
+            BillEntity updatedBill = billService.updateBill(id, bill.getPaymentMade(), bill.getPaymentCanceled(), bill.getBillCreated());
+            return new ResponseEntity<>(updatedBill, HttpStatus.OK);
+        } catch (RuntimeException ex) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-
-        BillEntity currentBill = currentBillOpt.get();
-
-        // Provera da li se račun menja iz stanja "nije otkazan" u stanje "otkazan"
-        boolean isCancellingBill = !currentBill.getPaymentCanceled() && bill.getPaymentCanceled();
-
-        // Izmena računa
-        BillEntity updatedBill = billService.updateBill(id, bill.getPaymentMade(), bill.getPaymentCanceled(), bill.getBillCreated());
-        
-        if (isCancellingBill) {
-            // Ako se račun otkazuje, potrebno je ažurirati broj dostupnih/kupljenih ponuda
-            offerService.updateOfferAvailability(updatedBill.getOffer().getId(), 1); // Pretpostavimo da se povećava za 1 dostupna ponuda
-        }
-
-        return ResponseEntity.ok(updatedBill);
     }
     
     //ako se svaki put kreira voucer kada je placen racun
