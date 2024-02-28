@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.iktpreobuka.serialization.controllers.util.RESTError;
 import com.iktpreobuka.serialization.entities.AddressEntity;
 import com.iktpreobuka.serialization.entities.UserEntity;
 import com.iktpreobuka.serialization.security.Views;
@@ -68,5 +72,26 @@ public class UserController {
 	@JsonView(Views.Admin.class)
 	public List<UserEntity> getAllUsersForAdmin() {
 	return getDummyDB();
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
+	@JsonView(Views.Admin.class)
+	public ResponseEntity<?> getUserByID(@PathVariable Integer id) {
+		try {
+			List<UserEntity> users = getDummyDB();
+			for (UserEntity userEntity : users) {
+				if (userEntity.getId().equals(id)) {
+				// ako je korisnik pronadjen vratiti 200
+					return new ResponseEntity<UserEntity>(userEntity, HttpStatus.OK);
+				}
+			}
+			// ako korisnik nije pronadjen vratiti 404
+			return new ResponseEntity<RESTError>(new RESTError(1, "User not found"),
+			HttpStatus.NOT_FOUND);
+
+		} catch (Exception e) { // u slucaju izuzetka vratiti 500
+			return new ResponseEntity<RESTError>(new RESTError(2, "Exception occurred:" + e.getMessage()),
+			HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
