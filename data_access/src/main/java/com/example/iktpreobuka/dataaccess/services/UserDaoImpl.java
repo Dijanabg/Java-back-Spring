@@ -27,7 +27,10 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public UserEntity addNewUser(String name, String lastName, String email, LocalDate dateOfBirth) {
-        UserEntity user = new UserEntity();
+    	if(userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email already in use.");
+        }
+    	UserEntity user = new UserEntity();
         user.setName(name);
         user.setLastName(lastName);
         user.setEmail(email);
@@ -37,6 +40,9 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public ResponseEntity<UserEntity> updateUser(Integer id, UserEntity userDetails) {
+    	if(userDetails.getEmail() != null && userRepository.existsByEmailAndIdNot(userDetails.getEmail(), id)) {
+            return ResponseEntity.badRequest().body(null); // Email je već u upotrebi
+        }
     	Optional<UserEntity> userOptional = userRepository.findById(id);
         if (!userOptional.isPresent()) {
             return ResponseEntity.notFound().build();
@@ -47,11 +53,21 @@ public class UserDaoImpl implements UserDao{
         if (userDetails.getEmail() != null) user.setEmail(userDetails.getEmail());
         if (userDetails.getDateOfBirth() != null) user.setDateOfBirth(userDetails.getDateOfBirth());
         if (userDetails.getLastName() != null) user.setLastName(userDetails.getLastName());
-        
+        //setUserCostsBasedOnCity(user, city); // Pomoćna metoda za postavljanje troškova
 
         UserEntity updatedUser = userRepository.save(user);
         return ResponseEntity.ok(updatedUser);
     }
+    
+//    private void setUserCostsBasedOnCity(UserEntity user, String city) {
+//        if ("Novi Sad".equalsIgnoreCase(city)) {
+//            user.setCosts(5000);
+//        } else if ("Beograd".equalsIgnoreCase(city)) {
+//            user.setCosts(10000);
+//        } else {
+//            user.setCosts(0);
+//        }
+//    }
 
     @Override
     public Iterable<UserEntity> getAllUsers() {

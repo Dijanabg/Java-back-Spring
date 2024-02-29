@@ -21,4 +21,8 @@ Optional<UserEntity> findByEmail(String email);
     List<UserEntity> findAllByDateOfBirthSortedByName(@Param("dateOfBirth") LocalDate dateOfBirth);
 	@Query("SELECT u FROM UserEntity u WHERE u.name LIKE :letter%")
     List<UserEntity> findByFirstLetterOfName(@Param("letter") String letter);
+	
+	boolean existsByEmail(String email);
+
+    boolean existsByEmailAndIdNot(String email, Integer id);
 }
