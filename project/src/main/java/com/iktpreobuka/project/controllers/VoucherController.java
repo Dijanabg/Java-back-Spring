@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,8 +35,14 @@ public class VoucherController {
     
  // dodavanje vaucera
     @PostMapping("/{offerId}/buyer/{buyerId}")
-    public ResponseEntity<VoucherEntity> addVoucher(@PathVariable Integer offerId, @PathVariable Integer buyerId) {
-        return new ResponseEntity<>(voucherService.addVoucher(offerId, buyerId), HttpStatus.CREATED);
+    public ResponseEntity<?> addVoucher(@PathVariable Integer offerId, @PathVariable Integer buyerId) {
+        //return new ResponseEntity<>(voucherService.addVoucher(offerId, buyerId), HttpStatus.CREATED);
+    	try {
+            VoucherEntity createdVoucher = voucherService.addVoucher(offerId, buyerId);
+            return new ResponseEntity<>(createdVoucher, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     // azuriranje vaucera

@@ -7,7 +7,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import com.fasterxml.jackson.annotation.JsonView;
+import com.iktpreobuka.project.security.Views;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +22,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -29,44 +33,71 @@ public class OfferEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonView(Views.Public.class)
 	private Integer id;
+	
 	@Column(name = "offer_name", nullable = false)
+	@JsonView(Views.Public.class)
+	@NotBlank(message = "Name must be provided.")
 	private String offerName;
+	@JsonView(Views.Public.class)
+	@NotBlank(message = "Description must be provided.")
+	@Size(min=5, max=200, message = "Description name must be between {min} and {max} characters long.")
 	@Column(name = "offer_description", nullable = false)
+	
 	private String offerDescription;
 	
 	@JsonFormat(
 			shape = JsonFormat.Shape.STRING,
 			pattern = "dd-MM-yyyy HH:mm:ss")
 	@Column(name = "offer_created", nullable = false)
+	@JsonView(Views.Public.class)
 	private LocalDateTime offerCreated;
 	
 	@JsonFormat(
 			shape = JsonFormat.Shape.STRING,
 			pattern = "dd-MM-yyyy HH:mm:ss")
 	@Column(name = "offer_expires", nullable = false)
+	@JsonView(Views.Public.class)
 	private LocalDateTime offerExpires;
+	
 	@Column(name = "regular_price", nullable = false)
+	@JsonView(Views.Public.class)
+	@Min(value=1, message = "Action price must be greater than 1.")
 	private Double regularPrice;
+	
 	@Column(name = "action_price", nullable = false)
+	@JsonView(Views.Public.class)
+	@Min(value=1, message = "Action price must be greater than 1.")
 	private Double actionPrice;
+	
 	@Column(name = "image_path", nullable = true)
+	@JsonView(Views.Public.class)
 	private String imagePath;
+	
 	@Column(name = "available_offers", nullable = false)
+	@JsonView(Views.Public.class)
+	@Min(value=1, message = "Number available must be greater than 0.")
 	private Integer availableOffers;
+	
 	@Column(name = "bought_offers", nullable = false)
+	@JsonView(Views.Public.class)
+	@Min(value=1, message = "Number available must be greater than 0.")
 	private Integer boughtOffers;
 	
 	@Enumerated(EnumType.STRING)
     @Column(name = "offer_status", nullable = false)
+	@JsonView(Views.Public.class)
 	private EOfferStatus offerStatus;
 	
 	@ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
+	@JsonView(Views.Public.class)
     private CategoryEntity category;
     
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonView(Views.Public.class)
     private UserEntity user;
     
     @JsonIgnore

@@ -15,6 +15,7 @@ import com.iktpreobuka.project.entities.BillEntity;
 import com.iktpreobuka.project.entities.OfferEntity;
 import com.iktpreobuka.project.entities.UserEntity;
 import com.iktpreobuka.project.entities.VoucherEntity;
+import com.iktpreobuka.project.entities.dto.VoucherDTO;
 import com.iktpreobuka.project.repositories.OfferRepository;
 import com.iktpreobuka.project.repositories.UserRepository;
 import com.iktpreobuka.project.repositories.VoucherRepository;
@@ -55,12 +56,15 @@ public class VoucherServiceImpl implements VoucherService{
 	            .orElseThrow(() -> new RuntimeException("User not found"));
 	    OfferEntity offer = offerRepository.findById(offerId)
 	            .orElseThrow(() -> new RuntimeException("Offer not found"));
-
+	    VoucherDTO voucherDTO = new VoucherDTO();
+	    voucherDTO.setExpirationDate(LocalDate.now().plusDays(30)); // postavljanje datuma isteka na 30 dana od trenutka kreiranja
+	    voucherDTO.setIsUsed(false); // Inicijalno 
+	    
 	    VoucherEntity voucher = new VoucherEntity();
 	        voucher.setUser(user);
 	        voucher.setOffer(offer);
-	        voucher.setExpirationDate(LocalDate.now().plusDays(30)); // primer vazenje 30 dana
-	        voucher.setIsUsed(false);
+	        voucher.setExpirationDate(voucherDTO.getExpirationDate());
+	        voucher.setIsUsed(voucherDTO.getIsUsed());
 
 	    return voucherRepository.save(voucher);
 	}

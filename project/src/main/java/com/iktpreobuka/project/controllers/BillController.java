@@ -9,6 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iktpreobuka.project.entities.BillEntity;
 import com.iktpreobuka.project.entities.VoucherEntity;
+import com.iktpreobuka.project.entities.dto.BillDTO;
 import com.iktpreobuka.project.services.BillService;
-import com.iktpreobuka.project.services.OfferService;
 import com.iktpreobuka.project.services.VoucherService;
 
 @RestController
@@ -30,9 +32,6 @@ import com.iktpreobuka.project.services.VoucherService;
 public class BillController {
 	@Autowired
     private BillService billService;
-
-	@Autowired
-    private OfferService offerService;
 	
 	@Autowired
 	private VoucherService voucherService; 
@@ -43,11 +42,13 @@ public class BillController {
     }
  // Dodavanje racuna
     @PostMapping("/{offerId}/buyer/{buyerId}")
-    public ResponseEntity<BillEntity> addBill(@PathVariable Integer offerId,
+    public ResponseEntity<?> addBill(@PathVariable Integer offerId,
             @PathVariable Integer buyerId,
-            @RequestBody BillEntity bill) {
+            @Validated
+             @RequestBody BillDTO bill) {
+    	
 			try {
-				BillEntity newBill = billService.addBill(offerId, buyerId, bill.getPaymentMade(), bill.getPaymentCanceled(), bill.getBillCreated());
+				BillEntity newBill = billService.addBill(offerId, buyerId, bill);
 				return new ResponseEntity<>(newBill, HttpStatus.CREATED);
 			} catch (RuntimeException ex) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

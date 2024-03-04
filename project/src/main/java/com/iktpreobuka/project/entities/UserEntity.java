@@ -5,6 +5,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.iktpreobuka.project.security.Views;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,6 +21,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -25,19 +34,46 @@ public class UserEntity {
 	
 		@Id
 		@GeneratedValue(strategy = GenerationType.AUTO)
+		@JsonView(Views.Public.class)
 	    private Integer id;
+		
 		@Column(name = "first_name", nullable = false)
+		@JsonView(Views.Private.class)
+		@NotBlank(message = "First name must be provided.")
+		@Size(min=2, max=30, message = "First name must be between {min} and {max} characters long.")
 	    private String firstName;
+		
 		@Column(name = "last_name", nullable = false)
+		@JsonView(Views.Private.class)
+		@NotBlank(message = "Last name must be provided.")
+		@Size(min=2, max=30, message = "First name must be between {min} and {max} characters long.")
 	    private String lastName;
+		
 		@Column(name = "user_name", nullable = true)
+		@JsonView(Views.Public.class)
+		@NotBlank(message = "Username must be provided.")
+		@Size(min=5, max=20, message = "Username must be between {min} and {max} characters long.")
 	    private String username;
+		
+		
 		@Column(name = "password", nullable = false)
+		@JsonView(Views.Private.class)
+		@JsonProperty(access = Access.WRITE_ONLY)
+		@JsonIgnore
+		@NotBlank(message = "Password must be provided.")
+		@Size(min=5, message = "Password must be between {min} and {max} characters long.")
+		@Pattern(regexp = "([0-9].*[a-zA-Z])|([a-zA-Z].*[0-9])", message = "Password must contain letters and digits.")
 	    private String password;
+		
 	    @Column(name = "email", nullable = false, unique = true)
-	    private String email;
+	    @JsonView(Views.Private.class)
+		@NotNull(message = "Email must be provided.")
+		@Email(message = "Email is not valid.")
+		protected String email;
+	    
 	    @Enumerated(EnumType.STRING)
 	    @Column(name = "user_role", nullable = false)
+	    @JsonView(Views.Admin.class)
 	    private EUserRole userRole;
 	    
 	    @JsonIgnore

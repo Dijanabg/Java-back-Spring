@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import com.iktpreobuka.project.entities.BillEntity;
 import com.iktpreobuka.project.entities.OfferEntity;
 import com.iktpreobuka.project.entities.UserEntity;
+import com.iktpreobuka.project.entities.dto.BillDTO;
+import com.iktpreobuka.project.mappers.BillMapper;
 import com.iktpreobuka.project.repositories.BillRepository;
 import com.iktpreobuka.project.repositories.OfferRepository;
 import com.iktpreobuka.project.repositories.UserRepository;
@@ -22,6 +24,8 @@ public class BillServiceImpl implements BillService {
     private OfferRepository offerRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BillMapper billMapper;
     
     public BillServiceImpl(BillRepository billRepository) {
         this.billRepository = billRepository;
@@ -38,7 +42,7 @@ public class BillServiceImpl implements BillService {
     
     //dodavanje racuna
     @Override
-    public BillEntity addBill(Integer offerId, Integer buyerId, boolean paymentMade, boolean paymentCancelled, LocalDateTime billCreated) {
+    public BillEntity addBill(Integer offerId, Integer buyerId, BillDTO billDTO) {
         Optional<OfferEntity> offerf = offerRepository.findById(offerId);
         Optional<UserEntity> buyer = userRepository.findById(buyerId);
         if (offerf.isPresent() && buyer.isPresent()) {
@@ -50,12 +54,16 @@ public class BillServiceImpl implements BillService {
                 offer.setAvailableOffers(offer.getAvailableOffers() - 1);
                 offer.setBoughtOffers(offer.getBoughtOffers() + 1);
                 offerRepository.save(offer); // sacuvaj azuriranu ponudu
-	            BillEntity bill = new BillEntity();
+                
+	            BillEntity bill = billMapper.toEntity(billDTO);
 	            bill.setOffer(offerf.get());
 	            bill.setUser(buyer.get());
-	            bill.setPaymentMade(paymentMade);
-	            bill.setPaymentCanceled(paymentCancelled);
-	            bill.setBillCreated(billCreated);
+//	            bill.setPaymentMade(billDTO.getPaymentMade());
+//	            bill.setPaymentCanceled(billDTO.getPaymentCanceled());
+//	            bill.setBillCreated(billDTO.getBillCreated());
+	            //BillEntity savedBill = billRepository.save(bill);
+	            
+	            //return billMaper.toDto(savedBill);
 	            return billRepository.save(bill);
 	        }
 	        else {

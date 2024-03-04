@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Optional;
 
 import com.iktpreobuka.project.entities.BillEntity;
+import com.iktpreobuka.project.entities.dto.BillDTO;
 
 public interface BillService{
 	Optional<BillEntity> findBillById(Integer id);
 	
 	Iterable<BillEntity> findAllBills();
 	
-	BillEntity addBill(Integer offerId, Integer buyerId, boolean paymentMade, boolean paymentCancelled, LocalDateTime billCreated);
+	BillEntity addBill(Integer offerId, Integer buyerId, BillDTO billDTO);
 
     BillEntity updateBill(Integer id, Boolean paymentMade, Boolean paymentCancelled, LocalDateTime billCreated);
 

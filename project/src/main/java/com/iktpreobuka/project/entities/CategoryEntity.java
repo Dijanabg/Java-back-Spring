@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.iktpreobuka.project.security.Views;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,6 +15,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "categories")
@@ -21,10 +25,18 @@ public class CategoryEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonView(Views.Public.class)
 	private Integer id;
+	
 	@Column(name = "category_name", nullable = false)
+	@JsonView(Views.Public.class)
+	@NotBlank(message = "Category name must be provided.")
     private String categoryName;
+	
 	@Column(name = "category_description", nullable = false)
+	@JsonView(Views.Public.class)
+	@NotBlank(message = "Category description must be provided.")
+	@Size(max=30, message = "Category description must be under {max} characters long.")
     private String categoryDescription;
 	
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
