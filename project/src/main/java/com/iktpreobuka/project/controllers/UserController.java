@@ -4,8 +4,10 @@ package com.iktpreobuka.project.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.iktpreobuka.project.entities.EUserRole;
 import com.iktpreobuka.project.entities.UserEntity;
-import com.iktpreobuka.project.exceptions.ResourceNotFoundException;
 import com.iktpreobuka.project.repositories.UserRepository;
 import com.iktpreobuka.project.security.Views;
 import com.iktpreobuka.project.services.UserService;
@@ -56,9 +57,15 @@ public class UserController {
     }
 	//dodaj novog usera
 	@PostMapping
-	public UserEntity addNewUser(@RequestBody UserEntity newUser) {
-        return userService.addNewUser(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(),
-                newUser.getUsername(), newUser.getPassword(), newUser.getUserRole());
+	public ResponseEntity<UserEntity> addNewUser(@Validated @RequestBody UserEntity newUser) {
+		try {
+			UserEntity user = userService.addNewUser(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(),newUser.getUsername(), newUser.getPassword(), newUser.getUserRole());
+			return new ResponseEntity<>(user, HttpStatus.CREATED);
+		}catch (DataIntegrityViolationException e) {
+		        return new ResponseEntity<>(null, HttpStatus.CONFLICT); // konflikt, npr. korisničko ime već postoji
+		} catch (Exception e) {
+	        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+	    }
     }
 	
 	//vrati usera po id
@@ -73,21 +80,26 @@ public class UserController {
 	public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id) {
 	    try {
 	        UserEntity user = userService.getUserById(id);
-	        return new ResponseEntity<>(user, HttpStatus.OK);
-	    } catch (ResourceNotFoundException e) {
-	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	        if(user != null) {
+	            return new ResponseEntity<>(user, HttpStatus.OK);
+	        } else {
+	            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	        }
+	    } catch (Exception e) {
+	        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
 	//vrati sve usere
 	@GetMapping
-	public Iterable<UserEntity> getAllUsers() {
-		return userRepository.findAll();
+	public ResponseEntity<Iterable<UserEntity>> getAllUsers() {
+	    Iterable<UserEntity> users = userRepository.findAll();
+	    return new ResponseEntity<>(users, HttpStatus.OK);
 	}
 	
 	//update usera
 	@PutMapping("/{id}")
-	public ResponseEntity<UserEntity> updateUser(@PathVariable Integer id, @RequestBody UserEntity userUpdates) {
+	public ResponseEntity<UserEntity> updateUser(@PathVariable Integer id, @Validated @RequestBody UserEntity userUpdates) {
 	    UserEntity updatedUser = userService.updateUser(id, userUpdates);
 	    if (updatedUser != null) {
 	        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
@@ -97,14 +109,18 @@ public class UserController {
 	}
 	//delete user
 	@DeleteMapping("/{id}")
-    public boolean deleteUser(@PathVariable Integer id) {
-//        if (userRepository.existsById(id)) {
-//            userRepository.deleteById(id);
-//            return ResponseEntity.ok().build();
-//        }
-//        return ResponseEntity.notFound().build();
-		return userService.deleteUser(id);
-    }
+	public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
+	    try {
+	        boolean deleted = userService.deleteUser(id);
+	        if (deleted) {
+	            return ResponseEntity.ok().build();
+	        } else {
+	            return ResponseEntity.notFound().build();
+	        }
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body("Error deleting user: " + e.getMessage());
+	    }
+	}
 	//menjanje role po Id
 	@PutMapping("/change/{id}/role/{role}")
     public ResponseEntity<UserEntity> changeUserRole(@PathVariable Integer id, @PathVariable String role) {
@@ -131,10 +147,13 @@ public class UserController {
 	public ResponseEntity<?> changeUserPassword(@PathVariable Integer id, 
 	                                            @RequestParam("oldPassword") String oldPassword, 
 	                                            @RequestParam("newPassword") String newPassword) {
-	    UserEntity updatedUser = userService.changeUserPassword(id, oldPassword, newPassword);
-	    if (updatedUser != null) {
-	        return ResponseEntity.ok().build();
-	    } else {
+		if(oldPassword == null || oldPassword.trim().isEmpty() || newPassword == null || newPassword.trim().isEmpty()) {
+	        return ResponseEntity.badRequest().body("Old and new password must not be empty.");
+	    }
+		try {
+	        UserEntity updatedUser = userService.changeUserPassword(id, oldPassword, newPassword);
+	        return ResponseEntity.ok(updatedUser);
+	    } catch (Exception e) {
 	        return ResponseEntity.badRequest().body("Invalid old password or user not found.");
 	    }
 	}

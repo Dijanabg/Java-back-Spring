@@ -11,6 +11,7 @@ import com.iktpreobuka.project.entities.BillEntity;
 import com.iktpreobuka.project.entities.OfferEntity;
 import com.iktpreobuka.project.entities.UserEntity;
 import com.iktpreobuka.project.entities.dto.BillDTO;
+import com.iktpreobuka.project.entities.dto.ReportItem;
 import com.iktpreobuka.project.mappers.BillMapper;
 import com.iktpreobuka.project.repositories.BillRepository;
 import com.iktpreobuka.project.repositories.OfferRepository;
@@ -134,5 +135,18 @@ public class BillServiceImpl implements BillService {
             billRepository.save(bill);
         }
     }
+    @Override
+    public List<ReportItem> generateReportByDate(LocalDateTime startDate, LocalDateTime endDate) {
+        // Implementacija će zavisiti od strukture vaše baze i modela
+        // Ovo je samo ilustracija kako bi metoda mogla izgledati
+        List<ReportItem> reportItems = billRepository.findSalesByDate(startDate, endDate);
+        return reportItems;
+    }
 
+    @Override
+    public List<ReportItem> generateReportByCategory(LocalDateTime startDate, LocalDateTime endDate, Integer categoryId) {
+        
+        List<ReportItem> reportItems = billRepository.findSalesByCategoryAndDate(categoryId, endDate, startDate);
+        return reportItems;
+    }
 }

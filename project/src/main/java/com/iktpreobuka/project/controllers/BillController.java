@@ -1,6 +1,7 @@
 package com.iktpreobuka.project.controllers;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.iktpreobuka.project.entities.BillEntity;
 import com.iktpreobuka.project.entities.VoucherEntity;
 import com.iktpreobuka.project.entities.dto.BillDTO;
+import com.iktpreobuka.project.entities.dto.ReportItem;
 import com.iktpreobuka.project.security.Views;
 import com.iktpreobuka.project.services.BillService;
 import com.iktpreobuka.project.services.VoucherService;
@@ -140,5 +142,20 @@ public class BillController {
             // Račun ne postoji
             return ResponseEntity.notFound().build();
         }
+    }
+    @GetMapping("/generateReportByDate/{startDate}/and/{endDate}")
+    public ResponseEntity<List<ReportItem>> generateReportByDate(
+            @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDateTime startDate,
+            @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDateTime endDate) {
+        List<ReportItem> reportItems = billService.generateReportByDate(startDate, endDate);
+        return new ResponseEntity<>(reportItems, HttpStatus.OK);
+    }
+    @GetMapping("/generateReport/{startDate}/and/{endDate}/category/{categoryId}")
+    public ResponseEntity<List<ReportItem>> generateReportByCategory(
+            @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDateTime startDate,
+            @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDateTime endDate,
+            @PathVariable Integer categoryId) {
+        List<ReportItem> reportItems = billService.generateReportByCategory(startDate, endDate, categoryId);
+        return new ResponseEntity<>(reportItems, HttpStatus.OK);
     }
 }

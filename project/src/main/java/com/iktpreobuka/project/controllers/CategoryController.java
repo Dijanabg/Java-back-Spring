@@ -3,6 +3,7 @@ package com.iktpreobuka.project.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,8 +42,9 @@ public class CategoryController {
     }
 
     @PostMapping
-    public CategoryEntity addCategory(@RequestBody CategoryEntity newCategory) {
-        return categoryService.addCategory(newCategory);
+    public ResponseEntity<CategoryEntity> addCategory(@RequestBody CategoryEntity newCategory) {
+    	CategoryEntity createdCategory = categoryService.addCategory(newCategory);
+        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -59,12 +61,22 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public CategoryEntity getCategoryById(@PathVariable Integer id) {
-        return categoryService.getCategoryById(id);
+    public ResponseEntity<CategoryEntity> getCategoryById(@PathVariable Integer id) {
+    	CategoryEntity category = categoryService.getCategoryById(id);
+        if(category != null) {
+            return new ResponseEntity<>(category, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
     
     @PutMapping("/{id}")
-    public CategoryEntity updateCategory(@PathVariable Integer id, @RequestBody CategoryEntity categoryDetails) {
-        return categoryService.updateCategory(id, categoryDetails);
+    public ResponseEntity<CategoryEntity> updateCategory(@PathVariable Integer id, @RequestBody CategoryEntity categoryDetails) {
+    	CategoryEntity updatedCategory = categoryService.updateCategory(id, categoryDetails);
+        if(updatedCategory != null) {
+            return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

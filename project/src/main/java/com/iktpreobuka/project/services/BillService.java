@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.iktpreobuka.project.entities.BillEntity;
 import com.iktpreobuka.project.entities.dto.BillDTO;
+import com.iktpreobuka.project.entities.dto.ReportItem;
 
 public interface BillService{
 	Optional<BillEntity> findBillById(Integer id);
@@ -29,5 +30,9 @@ public interface BillService{
     boolean existsActiveBillsForCategory(Integer categoryId);
     
     void cancelBillsForExpiredOffer(Integer offerId);
+    
+    List<ReportItem> generateReportByDate(LocalDateTime startDate, LocalDateTime endDate);
+    
+    List<ReportItem> generateReportByCategory(LocalDateTime startDate, LocalDateTime endDate, Integer categoryId);
     
 }
