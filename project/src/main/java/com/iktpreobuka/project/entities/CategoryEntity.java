@@ -21,6 +21,7 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "categories")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonView(Views.Public.class)
 public class CategoryEntity {
 
 	@Id

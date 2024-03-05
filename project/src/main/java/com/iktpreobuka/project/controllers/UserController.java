@@ -1,6 +1,8 @@
 package com.iktpreobuka.project.controllers;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.iktpreobuka.project.entities.EUserRole;
 import com.iktpreobuka.project.entities.UserEntity;
 import com.iktpreobuka.project.exceptions.ResourceNotFoundException;
 import com.iktpreobuka.project.repositories.UserRepository;
+import com.iktpreobuka.project.security.Views;
 import com.iktpreobuka.project.services.UserService;
 
 
@@ -30,7 +34,26 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	
+	@GetMapping("/public")
+    @JsonView(Views.Public.class)
+    public ResponseEntity<List<UserEntity>> getUsersPublic() {
+        List<UserEntity> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("/private")
+    @JsonView(Views.Private.class)
+    public ResponseEntity<List<UserEntity>> getUsersPrivate() {
+        List<UserEntity> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("/admin")
+    @JsonView(Views.Admin.class)
+    public ResponseEntity<List<UserEntity>> getUsersAdmin() {
+        List<UserEntity> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
 	//dodaj novog usera
 	@PostMapping
 	public UserEntity addNewUser(@RequestBody UserEntity newUser) {

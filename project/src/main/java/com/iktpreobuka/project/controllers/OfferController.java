@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.iktpreobuka.project.entities.EOfferStatus;
 import com.iktpreobuka.project.entities.OfferEntity;
 import com.iktpreobuka.project.exceptions.ResourceNotFoundException;
+import com.iktpreobuka.project.security.Views;
 import com.iktpreobuka.project.services.OfferService;
 
 
@@ -36,6 +38,7 @@ public class OfferController {
 
 	//sve ponude
     @GetMapping
+    @JsonView(Views.Private.class)
     public ResponseEntity<List<OfferEntity>> getAllOffers() {
         List<OfferEntity> offers = offerService.getAllOffers();
         return new ResponseEntity<>(offers, HttpStatus.OK);

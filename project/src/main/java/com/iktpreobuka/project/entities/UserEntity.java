@@ -30,6 +30,7 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "users")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonView(Views.Admin.class)
 public class UserEntity {
 	
 		@Id

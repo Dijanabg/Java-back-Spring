@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.iktpreobuka.project.entities.CategoryEntity;
+import com.iktpreobuka.project.security.Views;
 import com.iktpreobuka.project.services.BillService;
 import com.iktpreobuka.project.services.CategoryService;
 import com.iktpreobuka.project.services.OfferService;
@@ -33,6 +35,7 @@ public class CategoryController {
 	private BillService billService;
 
     @GetMapping
+    @JsonView(Views.Public.class)
     public List<CategoryEntity> getAllCategories() {
         return categoryService.getAllCategories();
     }

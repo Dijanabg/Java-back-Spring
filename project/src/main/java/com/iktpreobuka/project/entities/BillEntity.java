@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import com.fasterxml.jackson.annotation.JsonView;
+import com.iktpreobuka.project.security.Views;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,16 +24,20 @@ import jakarta.persistence.Table;
 public class BillEntity {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonView(Views.Public.class)
     private Integer id;
 	@Column(name = "payment_made", nullable = false)
+	@JsonView(Views.Private.class)
     private Boolean paymentMade;
 	@Column(name = "payment_canceled", nullable = false)
+	@JsonView(Views.Private.class)
     private Boolean paymentCanceled;
     
     @JsonFormat(
 			shape = JsonFormat.Shape.STRING,
 			pattern = "dd-MM-yyyy HH:mm:ss")
     @Column(name = "bill_created", nullable = false)
+    @JsonView(Views.Public.class)
     private LocalDateTime billCreated;
 	public BillEntity() {
 		super();
@@ -47,10 +52,12 @@ public class BillEntity {
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id", nullable = false)
+	@JsonView(Views.Private.class)
     private OfferEntity offer;
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+	@JsonView(Views.Private.class)
     private UserEntity user;
 	
 	
